@@ -9,10 +9,12 @@ logger = logging.getLogger(__name__)
 class Ollama(Provider):
     def __init__(
         self,
+        model: str,
         server_url: str = "http://localhost",
         port: str = "11434",
         max_iterations: int = 10,
     ):
+        self.model = model
         self.port = port
         self.server_url = f"{server_url}:{port}"
         self.max_iterations = max_iterations
@@ -29,12 +31,8 @@ class Ollama(Provider):
 
     def generate(self, prompt: str, model: str = None, **kwargs) -> str:
         """Use the Ollama /api/generate endpoint for single-turn completion."""
-        target_model = model or self.get_default_model()
-        if not target_model:
-            raise ValueError("No model specified.")
-
         payload = {
-            "model": target_model,
+            "model": model or self.model,
             "prompt": prompt,
             "stream": False,
             "options": {
@@ -53,12 +51,8 @@ class Ollama(Provider):
 
     def chat(self, messages: list[dict], tools: list = None, tool_map: dict = None, model: str = None, **kwargs) -> str:
         """Use the Ollama /api/chat endpoint with tool-call support."""
-        target_model = model or self.get_default_model()
-        if not target_model:
-            raise ValueError("No model specified.")
-
         payload = {
-            "model": target_model,
+            "model": model or self.model,
             "messages": messages,
             "stream": False,
             "options": {
@@ -114,9 +108,3 @@ class Ollama(Provider):
         except (requests.exceptions.RequestException, KeyError, json.JSONDecodeError) as e:
             logger.error("Ollama chat failed: %s", e)
             return ""
-
-    def set_default_model(self, model_name: str) -> None:
-        self.config.set("ollama.default_model", model_name)
-
-    def get_default_model(self) -> str:
-        return self.config.get("ollama.default_model")

@@ -1,17 +1,14 @@
-
-
 [project]
 name = "kharness"
-version = "0.1.0"
+version = "0.1.1"
 description = "Lightweight framework for building LLM agents with tool use, memory, and multi-round research pipelines."
+authors = [{ name = "William Kruta", email = "wjkruta@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.12"
-license = { text = "MIT" }
 keywords = ["llm", "agent", "ollama", "llamacpp", "langchain", "ai", "tools"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -28,7 +25,9 @@ dependencies = [
 [project.urls]
 Repository = "https://github.com/William-Kruta/KHarness"
 
-
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["kharness*"]

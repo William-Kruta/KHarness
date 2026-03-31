@@ -1,7 +1,6 @@
 import re
 import json
 import logging
-import subprocess
 import requests
 from .provider import Provider
 
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 class LlamaCpp(Provider):
     def __init__(
         self,
-        server_url: str = "http://localhost",
+        server_url: str = "http://127.0.0.1",
         port: str = "8080",
         max_iterations: int = 5,
         strip_tools_after: int = 3,
@@ -21,45 +20,6 @@ class LlamaCpp(Provider):
         self.max_iterations = max_iterations
         self.strip_tools_after = strip_tools_after
         super().__init__("llamacpp")
-
-    def start_llama_server(
-        self,
-        model_name: str = None,
-        num_ctx: int = 8192,
-        num_gpu_layers: int = 99,
-        flash_attn: bool = True,
-        tensor_split: str = "2,1",
-    ):
-        model_dir = self.get_model_dir()
-        if model_name is None:
-            model_name = self.get_default_model()
-        if not model_name:
-            raise ValueError(
-                "Model not passed in function parameter and 'default_model' not set. "
-                "Please set it using set_default_model() before starting the server."
-            )
-        if not model_dir:
-            raise ValueError(
-                "Model directory not set. Please set it using set_model_dir() before starting the server."
-            )
-        command = [
-            "llama-server",
-            "-m", f"{model_dir}/{model_name}",
-            "--port", self.port,
-            "-c", str(num_ctx),
-            "-ngl", str(num_gpu_layers),
-            "--flash-attn", "on" if flash_attn else "off",
-            "--tensor-split", tensor_split,
-            "--metrics",
-        ]
-
-        try:
-            process = subprocess.Popen(command)
-            logger.info("llama-server started with PID: %s", process.pid)
-            return process
-        except FileNotFoundError:
-            logger.error("'llama-server' executable not found in PATH.")
-            return None
 
     def check_health(self) -> bool:
         try:
@@ -116,10 +76,11 @@ class LlamaCpp(Provider):
 
         return ""
 
-    def chat(self, messages: list[dict], tools: dict = None, tool_map: dict = None, **kwargs) -> str:
+    def chat(self, messages: list[dict], tools: list = None, tool_map: dict = None, **kwargs) -> str:
         if isinstance(messages, str):
             messages = [{"role": "user", "content": messages}]
         payload = {
+            "model": kwargs.get("model", "local-model"),
             "messages": messages,
             "max_tokens": kwargs.get("max_tokens", 2048),
             "temperature": kwargs.get("temperature", 0.7),
@@ -132,7 +93,10 @@ class LlamaCpp(Provider):
                 json=payload,
                 timeout=120,
             )
-            response.raise_for_status()
+            if not response.ok:
+                raise RuntimeError(
+                    f"llama.cpp returned {response.status_code}:\n{response.text}\n\nPayload sent:\n{json.dumps(payload, indent=2)}"
+                )
             result = response.json()
             msg = result["choices"][0]["message"]
 

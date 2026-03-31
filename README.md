@@ -29,42 +29,41 @@ Providers wrap a local inference backend and expose a unified `chat()` interface
 ```python
 from kharness.providers import Ollama
 
-provider = Ollama()                         # defaults: localhost:11434
-provider.set_default_model("qwen2.5:7b")
+provider = Ollama("qwen2.5:7b")             # model is required
 
 response = provider.chat(
-    [{"role": "user", "content": "Hello!"}],
-    model="qwen2.5:7b",
+    [{"role": "user", "content": "Hello!"}]
 )
 ```
 
+| Parameter        | Default              | Description                   |
+| ---------------- | -------------------- | ----------------------------- |
+| `model`          | —                    | Model name (required)         |
+| `server_url`     | `"http://localhost"` | Server host                   |
+| `port`           | `"11434"`            | Server port                   |
+| `max_iterations` | `10`                 | Max tool-call loop iterations |
+
 ### LlamaCpp
+
+Assumes a `llama-server` process is already running. Connect to it:
 
 ```python
 from kharness.providers import LlamaCpp
 
-provider = LlamaCpp()                       # defaults: localhost:8080
-provider.set_model_dir("/path/to/models")
-provider.set_default_model("Mistral-7B-Q4_K_M.gguf")
+provider = LlamaCpp()                       # defaults: 127.0.0.1:8080
 
-# Start the llama-server subprocess
-process = provider.start_llama_server()
-
-# Check if the server is ready
 if provider.check_health():
     response = provider.chat(
         [{"role": "user", "content": "Hello!"}]
     )
 ```
 
-**Constructor options:**
-
-| Parameter           | Default              | Description                             |
-| ------------------- | -------------------- | --------------------------------------- |
-| `server_url`        | `"http://localhost"` | Server host                             |
-| `port`              | `"8080"`             | Server port                             |
-| `max_iterations`    | `5`                  | Max tool-call loop iterations           |
-| `strip_tools_after` | `3`                  | Force text response after N tool rounds |
+| Parameter           | Default                | Description                             |
+| ------------------- | ---------------------- | --------------------------------------- |
+| `server_url`        | `"http://127.0.0.1"`   | Server host                             |
+| `port`              | `"8080"`               | Server port                             |
+| `max_iterations`    | `5`                    | Max tool-call loop iterations           |
+| `strip_tools_after` | `3`                    | Force text response after N tool rounds |
 
 ---
 
@@ -78,8 +77,7 @@ if provider.check_health():
 from kharness.providers import Ollama
 from kharness.agent import Agent
 
-provider = Ollama()
-provider.set_default_model("qwen2.5:7b")
+provider = Ollama("qwen2.5:7b")
 
 agent = Agent(provider)
 response = agent.run("What is the capital of France?")
@@ -155,8 +153,7 @@ from kharness.providers import Ollama
 from kharness.tools import WEB_TOOL_MAP
 from kharness.agent import Agent
 
-provider = Ollama()
-provider.set_default_model("qwen2.5:14b")
+provider = Ollama("qwen2.5:14b")
 
 agent = Agent(provider, tool_map=WEB_TOOL_MAP)
 
@@ -227,20 +224,6 @@ def add(a: int, b: int) -> int:
     return a + b
 
 agent = Agent(provider, tool_map={"add": add})
-```
-
----
-
-## Configuration
-
-Provider settings (model directory, default model) are persisted to `kharness/config/config.json` automatically via the `Config` class.
-
-```python
-provider.set_model_dir("/path/to/models")
-provider.set_default_model("my-model.gguf")
-
-print(provider.get_model_dir())
-print(provider.get_default_model())
 ```
 
 ---
