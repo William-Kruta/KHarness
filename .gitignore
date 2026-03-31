@@ -12,3 +12,4 @@ wheels/
 static/
 main.py 
 server.py
+test.py

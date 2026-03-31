@@ -7,7 +7,7 @@ A lightweight Python framework for building LLM agents with tool use, conversati
 ## Installation
 
 ```bash
-pip install agentharness
+pip install kharness
 ```
 
 **Optional dependencies** (install what you need):
@@ -59,12 +59,12 @@ if provider.check_health():
 
 **Constructor options:**
 
-| Parameter | Default | Description |
-|---|---|---|
-| `server_url` | `"http://localhost"` | Server host |
-| `port` | `"8080"` | Server port |
-| `max_iterations` | `5` | Max tool-call loop iterations |
-| `strip_tools_after` | `3` | Force text response after N tool rounds |
+| Parameter           | Default              | Description                             |
+| ------------------- | -------------------- | --------------------------------------- |
+| `server_url`        | `"http://localhost"` | Server host                             |
+| `port`              | `"8080"`             | Server port                             |
+| `max_iterations`    | `5`                  | Max tool-call loop iterations           |
+| `strip_tools_after` | `3`                  | Force text response after N tool rounds |
 
 ---
 
@@ -134,9 +134,9 @@ history = memory.get_history()  # list of message dicts
 memory.clear()
 ```
 
-| Parameter | Default | Description |
-|---|---|---|
-| `max_turns` | `20` | Max user/assistant pairs to retain |
+| Parameter   | Default | Description                        |
+| ----------- | ------- | ---------------------------------- |
+| `max_turns` | `20`    | Max user/assistant pairs to retain |
 
 ---
 
@@ -170,13 +170,13 @@ report = agent.research(
 print(report)
 ```
 
-| Parameter | Default | Description |
-|---|---|---|
-| `max_rounds` | `3` | Maximum search/analyze iterations |
-| `planning_tokens` | `1024` | Token budget for query planning |
-| `analysis_tokens` | `2048` | Token budget for per-round analysis |
-| `report_tokens` | `8000` | Token budget for final report |
-| `debug` | `True` | Log phase progress |
+| Parameter         | Default | Description                         |
+| ----------------- | ------- | ----------------------------------- |
+| `max_rounds`      | `3`     | Maximum search/analyze iterations   |
+| `planning_tokens` | `1024`  | Token budget for query planning     |
+| `analysis_tokens` | `2048`  | Token budget for per-round analysis |
+| `report_tokens`   | `8000`  | Token budget for final report       |
+| `debug`           | `True`  | Log phase progress                  |
 
 ---
 
@@ -190,15 +190,15 @@ Tools are standard LangChain `@tool` functions. Convenience maps are exported fo
 from kharness.tools import WEB_TOOL_MAP
 ```
 
-| Tool | Description |
-|---|---|
-| `web_search` | DuckDuckGo text search, returns top snippets |
-| `fetch_page` | Fetches a URL and extracts readable text |
-| `news_search` | DuckDuckGo news search with dates |
-| `image_search` | Returns direct image URLs |
-| `wikipedia_summary` | Wikimedia REST API summary |
-| `search_and_fetch` | Combines search + full page fetch |
-| `search_subreddit` | Fetches top posts from a subreddit |
+| Tool                | Description                                  |
+| ------------------- | -------------------------------------------- |
+| `web_search`        | DuckDuckGo text search, returns top snippets |
+| `fetch_page`        | Fetches a URL and extracts readable text     |
+| `news_search`       | DuckDuckGo news search with dates            |
+| `image_search`      | Returns direct image URLs                    |
+| `wikipedia_summary` | Wikimedia REST API summary                   |
+| `search_and_fetch`  | Combines search + full page fetch            |
+| `search_subreddit`  | Fetches top posts from a subreddit           |
 
 ### Stock tools
 
@@ -206,13 +206,13 @@ from kharness.tools import WEB_TOOL_MAP
 from kharness.tools import STOCK_TOOL_MAP
 ```
 
-| Tool | Description |
-|---|---|
-| `get_candles` | OHLCV candlestick data |
-| `get_options` | Options chain (calls and puts) |
-| `get_income_statements` | Income statement financials |
-| `get_balance_sheet` | Balance sheet financials |
-| `get_cash_flow` | Cash flow statement |
+| Tool                    | Description                    |
+| ----------------------- | ------------------------------ |
+| `get_candles`           | OHLCV candlestick data         |
+| `get_options`           | Options chain (calls and puts) |
+| `get_income_statements` | Income statement financials    |
+| `get_balance_sheet`     | Balance sheet financials       |
+| `get_cash_flow`         | Cash flow statement            |
 
 ### Custom tools
 
