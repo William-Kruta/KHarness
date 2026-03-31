@@ -1,0 +1,8 @@
+{
+    "llamacpp": {
+        "models_dir": ""
+    },
+    "llamacpp.models_dir": "/mnt/machine_learning/AI_APPS/LLM_MODELS",
+    "llamacpp.default_model": "Nemotron-Cascade-2-30B-A3B-Q4_K_M.gguf",
+    "ollama.default_model": "qwen3.5:2b"
+}
